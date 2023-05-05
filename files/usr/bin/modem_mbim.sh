@@ -4,7 +4,7 @@ T1="T1"
 X15G="5G"
 
 echo "Setting modem in MBIM mode..."
-if [[ "$MODEL" == *"$T1"* ]]; then
+if echo "$MODEL" | grep -q "$T1"; then
 	mmcli -m any --command="AT!ENTERCND=\"A710\""
     mmcli -m any --command="AT!USBCOMP=1,1,100D"
     mmcli -m any --command="AT!RESET"
@@ -19,7 +19,7 @@ else
     done
 fi
 
-if [[ "$MODEL" == *"$X15G"* ]]; then
+if echo "$MODEL" | grep -q "$X15G"; then
     echo "noop"
 else
     /etc/init.d/modemmanager restart
