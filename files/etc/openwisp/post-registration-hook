@@ -1,0 +1,12 @@
+#!/bin/sh
+# set management interface in openwisp-config
+# after registration to avoid slowing down registration
+# (if management_interface is configured, OpenWISP will
+#   wait for the management interface to come up before starting)
+uci set openwisp.http.management_interface=nhwg0
+uci commit openwisp
+/etc/init.d/openwisp_config enable
+/etc/init.d/openwisp_config start
+/etc/init.d/openwisp-monitoring enable
+/etc/init.d/openwisp-monitoring start
+ifup nhwg0

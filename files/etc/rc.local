@@ -1,0 +1,4 @@
+printf "AT+QPOWD=1\r" > /dev/ttyUSB2
+irqbalance --oneshot
+sleep 60
+/usr/bin/run_stateman.sh

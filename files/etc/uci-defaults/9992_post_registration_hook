@@ -1,0 +1,2 @@
+#!/bin/sh
+chmod +x /etc/openwisp/post-registration-hook

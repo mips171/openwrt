@@ -1,0 +1,19 @@
+:root {
+  --main-color: #f18519;
+  --header-bg: #6c6c6c;
+  --header-color: #fff;
+  --bar-bg: #f29538;
+  --menu-bg-color: #fff;
+  --menu-color: #5f6368;
+  --menu-color-hover: #202124;
+  --main-menu-color: #202124;
+  --submenu-bg-hover: #d4d4d4;
+  --submenu-bg-hover-active: #f18519;
+  --font-body: "Microsoft Yahei", "WenQuanYi Micro Hei", "sans-serif",
+    "Helvetica Neue", "Helvetica", "Hiragino Sans GB";
+}
+
+header > .fill > .container > #logo > img {
+  width: calc(0% + 10rem);
+  margin-top: -0.46rem;
+}
