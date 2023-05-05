@@ -1,0 +1,4 @@
+#!/bin/sh
+
+/etc/init.d/cron enable
+/etc/init.d/cron start

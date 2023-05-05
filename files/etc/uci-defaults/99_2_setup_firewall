@@ -1,0 +1,61 @@
+#!/bin/sh
+
+MODEL=$(cat /proc/device-tree/model)
+X1PRO="X1"
+X15G="5G"
+T1="T1"
+
+echo "Configuring $MODEL Firewall"
+
+uci add_list firewall.@zone[1].network="mobiledata"
+uci add_list firewall.@zone[1].network="wwan"
+uci add_list firewall.@zone[1].network="mobile2"
+uci add_list firewall.@zone[1].network="mobileinfo"
+
+uci set firewall.zone1.helper="sip"
+uci set firewall.zone2.helper="sip"
+
+uci add firewall redirect
+uci set firewall.@redirect[-1].target="DNAT"
+uci set firewall.@redirect[-1].name="Allow HTTPS Web Access From WAN"
+uci set firewall.@redirect[-1].proto="tcp"
+uci set firewall.@redirect[-1].src="wan"
+uci set firewall.@redirect[-1].src_dport="443"
+uci set firewall.@redirect[-1].dest="lan"
+uci set firewall.@redirect[-1].dest_ip="192.168.1.1"
+uci set firewall.@redirect[-1].dest_port="443"
+uci set firewall.@redirect[-1].enabled="0"
+
+uci add firewall redirect
+uci set firewall.@redirect[-1].target="DNAT"
+uci set firewall.@redirect[-1].name="Allow HTTP Web Access From WAN"
+uci set firewall.@redirect[-1].proto="tcp"
+uci set firewall.@redirect[-1].src="wan"
+uci set firewall.@redirect[-1].src_dport="80"
+uci set firewall.@redirect[-1].dest="lan"
+uci set firewall.@redirect[-1].dest_ip="192.168.1.1"
+uci set firewall.@redirect[-1].dest_port="80"
+uci set firewall.@redirect[-1].enabled="0"
+
+uci add firewall redirect
+uci set firewall.@redirect[-1].target="DNAT"
+uci set firewall.@redirect[-1].name="Allow SSH Access From WAN"
+uci set firewall.@redirect[-1].proto="tcp"
+uci set firewall.@redirect[-1].src="wan"
+uci set firewall.@redirect[-1].src_dport="22"
+uci set firewall.@redirect[-1].dest="lan"
+uci set firewall.@redirect[-1].dest_ip="192.168.1.1"
+uci set firewall.@redirect[-1].dest_port="22"
+uci set firewall.@redirect[-1].enabled="0"
+
+if echo "$MODEL" | grep -q "$X1PRO"; then
+    uci set firewall.@defaults[0].flow_offloading=1
+    if echo "$MODEL" | grep -q "$X15G"; then
+        uci add_list firewall.@zone[1].network=wwan0_1
+        uci add_list firewall.@zone[1].network=qmimux0
+    fi
+elif echo "$MODEL" | grep -q "$T1"; then
+    echo "T1"
+fi
+
+exit 0

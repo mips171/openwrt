@@ -1,0 +1,29 @@
+#!/bin/sh
+
+MODEL=$(cat /proc/device-tree/model)
+X1PRO="X1"
+X15G="5G"
+T1="T1"
+
+echo "Configuring $MODEL LEDs"
+
+uci set system.led_wwan=led
+uci set system.led_wwan.name="WWAN"
+uci set system.led_wwan.sysfs="green:led2"
+uci set system.led_wwan.trigger="netdev"
+uci set system.led_wwan.default="0"
+uci add_list system.led_wwan.mode="tx"
+uci add_list system.led_wwan.mode="rx"
+uci add_list system.led_wwan.mode="link"
+
+if echo "$MODEL" | grep -q "$X1PRO"; then
+    if echo "$MODEL" | grep -q "$X15G"; then
+        uci set system.led_wwan.dev="wwan0_1"
+    else
+        uci set system.led_wwan.dev="wwan0"
+    fi
+elif echo "$MODEL" | grep -q "$T1"; then
+    uci set system.led_wwan.sysfs="blue:status"
+fi
+
+exit 0

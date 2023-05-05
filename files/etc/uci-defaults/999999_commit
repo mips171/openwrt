@@ -1,0 +1,6 @@
+#!/bin/sh
+
+uci commit
+/sbin/reload_config
+
+exit 0

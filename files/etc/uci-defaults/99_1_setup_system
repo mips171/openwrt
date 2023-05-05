@@ -1,0 +1,70 @@
+#!/bin/sh
+
+MODEL=$(cat /proc/device-tree/model)
+X1PRO="X1"
+X15G="5G"
+T1="T1"
+HOSTNAME=$(echo "$MODEL" | awk '{ gsub(/ /,""); print }')
+DIAG_HOST="google.com.au"
+SYSTEM_TELCO="system.telco"
+PRETTY_NAME=$(grep OPENWRT_RELEASE /etc/os-release | sed 's/.*="\([^"]*\)".*/\1/')
+VERSION=$(grep VERSION_ID /etc/os-release | sed 's/.*="\([^"]*\)".*/\1/')
+MBIM="mbim"
+QMI="qmi"
+
+echo "Configuring $MODEL System"
+
+# Create the system.telco entry
+uci set $SYSTEM_TELCO=telco
+
+# Bridgemode off by default
+uci set $SYSTEM_TELCO.bridgemode="0"
+
+# Set the default required modem mode
+if echo "$MODEL" | grep -q "$X1PRO"; then
+    uci set $SYSTEM_TELCO.energyprofile="performance"
+    uci set $SYSTEM_TELCO.requiredmodemmode="$MBIM"
+
+    if echo "$MODEL" | grep -q "$X15G"; then
+        uci set $SYSTEM_TELCO.requiredmodemmode="$QMI"
+        /etc/init.d/sqm stop
+        /etc/init.d/sqm disable
+    fi
+fi
+
+if echo "$MODEL" | grep -q "$T1"; then
+    uci set $SYSTEM_TELCO.requiredmodemmode="$MBIM"
+fi
+
+# Defaults for all systems
+uci set $SYSTEM_TELCO.autoapn="1"
+uci set system.@system[0].hostname="$HOSTNAME"
+uci set system.@system[0].osstring="$PRETTY_NAME"
+uci set system.@system[0].osversion="$VERSION"
+uci set system.@system[0].zonename="Australia/Brisbane"
+uci set system.@system[0].timezone="AEST-10"
+uci set system.system.notes=" "
+uci set system.system.description=" "
+uci set system.ntp.server="0.au.pool.ntp.org"
+uci add_list system.ntp.server="1.au.pool.ntp.org"
+uci add_list system.ntp.server="2.au.pool.ntp.org"
+uci add_list system.ntp.server="3.au.pool.ntp.org"
+uci set luci.apply.rollback="180"
+uci set luci.diag.dns="$DIAG_HOST"
+uci set luci.diag.ping="$DIAG_HOST"
+uci set luci.diag.route="$DIAG_HOST"
+uci set network.@switch_vlan[0].ports="0t 0t 1 2 3 4"
+uci set network.@switch_vlan[1].ports="0t 0t 5"
+uci add system button
+uci set system.@button[-1].button="reset"
+uci set system.@button[-1].action="released"
+uci set system.@button[-1].handler="firstboot -y && reboot"
+uci set system.@button[-1].min="3"
+uci set system.@button[-1].max="30"
+
+chmod +x /usr/bin/bridgemode.sh
+chmod +x /etc/init.d/bridgemode
+
+chmod +x /sbin/sysupgrade
+
+exit 0

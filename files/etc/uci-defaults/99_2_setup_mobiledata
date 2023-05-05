@@ -1,0 +1,48 @@
+#!/bin/sh
+
+MODEL="$(cat /proc/device-tree/model)"
+X1PRO="X1"
+X15G="5G"
+T1="T1"
+
+echo "Configuring $MODEL Mobile Settings"
+if echo "$MODEL" | grep -q "$X1PRO"; then
+    if echo "$MODEL" | grep -q "$X15G"; then
+        uci set system.telco.overdrive=1
+        uci set network.mobilesettings=interface
+        uci set network.mobilesettings.device=none
+        uci set network.mobilesettings.proto=qcm
+        uci set network.wwan=interface
+        uci set network.wwan.proto=dhcp
+        uci set network.wwan.device=wwan0
+        uci set network.wwan.metric=50
+        uci set network.mobile=interface
+        uci set network.mobile.device=qmimux0
+        uci set network.mobile.proto=dhcp
+        uci set network.mobile2=interface
+        uci set network.mobile2.proto=dhcp
+        uci set network.mobile2.device="wwan0_1"
+    else
+        uci set network.mobile=interface
+    	uci set network.mobile.proto=modemmanager
+        uci set system.modem="/sys/devices/platform/soc/8af8800.usb3/8a00000.dwc3/xhci-hcd.0.auto/usb2/2-1"
+	    uci set network.mobile.device="/sys/devices/platform/soc/8af8800.usb3/8a00000.dwc3/xhci-hcd.0.auto/usb2/2-1"
+	    uci set network.mobile.auth=none
+	    uci set network.mobile.iptype=ipv4v6
+	    uci set network.mobile.signalrate=5
+        uci set network.mobile.autoapn=1
+        uci set network.mobile.metric=50
+    fi
+elif echo "$MODEL" | grep -q "$T1"; then
+    uci set system.modem="/sys/devices/platform/ahb/1b000000.usb/usb1/1-1"
+    uci set network.mobile=interface
+    uci set network.mobile.proto="modemmanager"
+    uci set network.mobile.device="/sys/devices/platform/ahb/1b000000.usb/usb1/1-1"
+    uci set network.mobile.signalrate=10
+    uci set network.mobile.lowpower=0
+    uci set network.mobile.autoapn=1
+    uci set network.mobile.simslot=1
+    uci set network.mobile.metric=50
+fi
+
+exit 0
