@@ -4,13 +4,11 @@ MODEL=$(cat /proc/device-tree/model)
 X1PRO="X1"
 X15G="5G"
 T1="T1"
+MMIFACENAME="mobile"
 
 echo "Configuring $MODEL Firewall"
 
-uci add_list firewall.@zone[1].network="mobiledata"
-uci add_list firewall.@zone[1].network="wwan"
-uci add_list firewall.@zone[1].network="mobile2"
-uci add_list firewall.@zone[1].network="mobileinfo"
+uci add_list firewall.@zone[1].network="$MMIFACENAME"
 
 uci set firewall.zone1.helper="sip"
 uci set firewall.zone2.helper="sip"
@@ -53,6 +51,9 @@ if echo "$MODEL" | grep -q "$X1PRO"; then
     if echo "$MODEL" | grep -q "$X15G"; then
         uci add_list firewall.@zone[1].network=wwan0_1
         uci add_list firewall.@zone[1].network=qmimux0
+        uci add_list firewall.@zone[1].network="wwan"
+        uci add_list firewall.@zone[1].network="mobile2"
+        uci add_list firewall.@zone[1].network="mobileinfo"
     fi
 elif echo "$MODEL" | grep -q "$T1"; then
     echo "T1"

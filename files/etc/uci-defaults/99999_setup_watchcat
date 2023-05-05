@@ -4,6 +4,7 @@ MODEL=$(cat /proc/device-tree/model)
 X1PRO="X1"
 X15G="5G"
 T1="T1"
+MMIFACENAME="mobile"
 
 chmod +x /usr/bin/watchcat.sh
 chmod +x /etc/init.d/watchcat
@@ -24,7 +25,7 @@ if echo "$MODEL" | grep -q "$X1PRO"; then
         uci set watchcat.@watchcat[-1].pingperiod="5s"
         uci set watchcat.@watchcat[-1].mode="restart_iface"
         uci set watchcat.@watchcat[-1].interface="wwan0"
-        uci set watchcat.@watchcat[-1].mmifacename="mobiledata"
+        uci set watchcat.@watchcat[-1].mmifacename="$MMIFACENAME"
         uci set system.led_wwan.dev="wwan0"
     fi
 elif echo "$MODEL" | grep -q "$T1"; then
@@ -32,7 +33,7 @@ elif echo "$MODEL" | grep -q "$T1"; then
     uci set watchcat.@watchcat[-1].pingperiod="5s"
     uci set watchcat.@watchcat[-1].mode="restart_iface"
     uci set watchcat.@watchcat[-1].interface="wwan0"
-    uci set watchcat.@watchcat[-1].mmifacename="mobiledata"
+    uci set watchcat.@watchcat[-1].mmifacename="$MMIFACENAME"
     uci set system.led_wwan.dev="wwan0"
 fi
 

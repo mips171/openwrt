@@ -12,17 +12,16 @@ uci set openwisp.http.url='https://mgmt.networkhoist.com/'
 uci set openwisp.http.shared_secret='QRoBWH4oSX7mwzpcRhgK2qD2IzZjmgoI'
 uci set openwisp.http.verify_ssl='0'
 
-if [[ "$MODEL" == *"$X1PRO"* ]]; then
+if echo "$MODEL" | grep -q "$X1PRO"; then
     uci set openwisp.http.default_hostname='TelcoX1Pro'
-    if [[ "$MODEL" == *"$X15G"* ]]; then
+    if echo "$MODEL" | grep -q "$X15G"; then
         uci set openwisp.http.tags='x1pro5G pppoeserver nhwg0'
     else
         uci set openwisp.http.tags='x1pro pppoeserver nhwg0'
     fi
 fi
 
-if [[ "$MODEL" == *"$T1"* ]]; then
-    uci set openwisp.http.tags='telcot1 accesspoint nhwg0'
+if echo "$MODEL" | grep -q "$T1"; then    uci set openwisp.http.tags='telcot1 accesspoint nhwg0'
     uci set openwisp.http.default_hostname='TelcoT1'
 fi
 
