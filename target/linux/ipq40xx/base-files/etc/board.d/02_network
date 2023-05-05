@@ -116,6 +116,7 @@ ipq40xx_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"0u@eth0" "3:lan" "4:lan" "0u@eth1" "5:wan"
 		;;
+	tel,x1pro |\
 	unielec,u4019-32m)
 		ucidef_set_interfaces_lan_wan "eth0" "eth1"
 		ucidef_add_switch "switch0" \
@@ -165,6 +166,11 @@ ipq40xx_setup_macs()
 		lan_mac=$(mtd_get_mac_ascii 0:APPSBLENV ethaddr)
 		label_mac=$wan_mac
 		;;
+	tel,x1pro)
+		label_mac=$(mtd_get_mac_binary "0:ART" 0x1006)
+		wan_mac=$(macaddr_add "$label_mac" 1)
+		lan_mac=$(macaddr_add "$label_mac" 2)
+	;;
 	engenius,ens620ext)
 		wan_mac=$(mtd_get_mac_ascii u-boot-env ethaddr)
 		lan_mac=$(macaddr_add "$wan_mac" 1)
