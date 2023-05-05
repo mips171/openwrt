@@ -377,6 +377,22 @@ proto_modemmanager_setup() {
 
 	json_get_vars device apn autoapn allowedauth username password pincode iptype metric signalrate
 
+	# if system.telco.bridgemode is set, bailout
+	[ "$(uci -q get system.telco.bridgemode)" = "1" ] && {
+		proto_notify_error "${interface}" DEVICE_NOT_MANAGED_BRIDGEMODE
+		logger -p daemon.info -t "ModemManager[$$]" "Bridge mode enabled, not starting modemmanager"
+		proto_set_available "${interface}" 0
+		return 1
+	}
+
+	# if system.telco.overdrive is set, bailout
+	[ "$(uci -q get system.telco.overdrive)" = "1" ] && {
+		proto_notify_error "${interface}" DEVICE_NOT_MANAGED_OVERDRIVEMODE
+		logger -p daemon.info -t "ModemManager[$$]" "Overdrive mode enabled, not starting modemmanager"
+		proto_set_available "${interface}" 0
+		return 1
+	}
+
 	# validate sysfs path given in config
 	[ -n "${device}" ] || {
 		echo "No device specified"
@@ -396,7 +412,7 @@ proto_modemmanager_setup() {
 	# If autoapn is enabled, run the autoapn script
 	if [ "$autoapn" = "1" ]; then
 		/usr/bin/lua /usr/bin/modem_autoapn.lua
-		apn=$(uci -q get network.mobile.apn)
+		apn=$(uci -q get system.telco.apn)
 		logger -p daemon.info -t "ModemManager[$$]" "Using automatically chosen apn: $apn"
 	fi
 
