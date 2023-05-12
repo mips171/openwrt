@@ -28,6 +28,7 @@ MGMTIFACE="nhwg0"
 
 cycle_mgmt_iface() {
 	ubus call network.interface.$MGMTIFACE remove
+	sleep 1
 	ifup $MGMTIFACE
 }
 
