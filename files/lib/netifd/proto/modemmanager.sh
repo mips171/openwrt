@@ -24,6 +24,13 @@ cdr2mask ()
 	echo "${1-0}"."${2-0}"."${3-0}"."${4-0}"
 }
 
+MGMTIFACE="nhwg0"
+
+cycle_mgmt_iface() {
+	ubus call network.interface.$MGMTIFACE remove
+	ifup $MGMTIFACE
+}
+
 stop_wc() {
 	logger -p daemon.info -t "ModemManager[$$]" "Stopping watchcat"
 	/etc/init.d/watchcat stop
@@ -538,6 +545,8 @@ proto_modemmanager_setup() {
 			;;
 		esac
 	}
+
+	cycle_mgmt_iface
 
 	return 0
 }
