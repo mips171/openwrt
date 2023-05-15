@@ -81,8 +81,20 @@ watchcat_restart_modemmanager_iface() {
 	ifup "$1"
 }
 
+cycle_mgmt_iface() {
+	ubus call network.interface."$1" remove
+	sleep 1
+	ifup "$1"
+}
+
 watchcat_restart_network_iface() {
 	logger -p daemon.info -t "watchcat[$$]" "Restarting network interface: \"$1\"."
+
+	if [ "$1" = "nhwg0" ]; then
+		cycle_mgmt_iface "$1"
+		return
+	fi
+
 	ip link set "$1" down
 	ip link set "$1" up
 }

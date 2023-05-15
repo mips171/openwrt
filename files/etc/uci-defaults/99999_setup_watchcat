@@ -5,6 +5,8 @@ X1PRO="X1"
 X15G="5G"
 T1="T1"
 MMIFACENAME="mobile"
+OPENWISPIP="172.16.0.1"
+OPENWISPIFACE="nhwg0"
 
 chmod +x /usr/bin/watchcat.sh
 chmod +x /etc/init.d/watchcat
@@ -44,5 +46,13 @@ uci set watchcat.@watchcat[-1].mode="ping_reboot"
 uci set watchcat.@watchcat[-1].period="5m"
 uci set watchcat.@watchcat[-1].pingperiod="5s"
 uci set watchcat.@watchcat[-1].forcedelay="10"
+
+uci add watchcat watchcat
+uci set watchcat.@watchcat[-1].pinghosts=$OPENWISPIP
+uci set watchcat.@watchcat[-1].pingsize="standard"
+uci set watchcat.@watchcat[-1].mode="restart_iface"
+uci set watchcat.@watchcat[-1].interface=$OPENWISPIFACE
+uci set watchcat.@watchcat[-1].period="1m"
+uci set watchcat.@watchcat[-1].pingperiod="30s"
 
 exit 0
