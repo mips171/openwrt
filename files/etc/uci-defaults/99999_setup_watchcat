@@ -23,7 +23,7 @@ if echo "$MODEL" | grep -q "$X1PRO"; then
         uci set watchcat.@watchcat[-1].mode="restart_iface"
         uci set watchcat.@watchcat[-1].interface="wwan0_1"
     else
-        uci set watchcat.@watchcat[-1].period="30s"
+        uci set watchcat.@watchcat[-1].period="5m"
         uci set watchcat.@watchcat[-1].pingperiod="5s"
         uci set watchcat.@watchcat[-1].mode="restart_iface"
         uci set watchcat.@watchcat[-1].interface="wwan0"
@@ -31,7 +31,7 @@ if echo "$MODEL" | grep -q "$X1PRO"; then
         uci set system.led_wwan.dev="wwan0"
     fi
 elif echo "$MODEL" | grep -q "$T1"; then
-    uci set watchcat.@watchcat[-1].period="30s"
+    uci set watchcat.@watchcat[-1].period="5m"
     uci set watchcat.@watchcat[-1].pingperiod="5s"
     uci set watchcat.@watchcat[-1].mode="restart_iface"
     uci set watchcat.@watchcat[-1].interface="wwan0"
